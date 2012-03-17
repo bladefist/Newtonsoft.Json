@@ -1259,16 +1259,22 @@ namespace Newtonsoft.Json
           }
           else
           {
-            try
-            {
-              numberValue = Convert.ToInt64(number, CultureInfo.InvariantCulture);
-            }
-            catch (OverflowException ex)
-            {
-              throw new JsonReaderException("JSON integer {0} is too large or small for an Int64.".FormatWith(CultureInfo.InvariantCulture, number), ex);
-            }
-
-            numberType = JsonToken.Integer;
+              try
+              {
+                  Int64 try64;
+                  numberType = JsonToken.Integer;
+                  if (Int64.TryParse(number, out try64))
+                      numberValue = Convert.ToInt64(number, CultureInfo.InvariantCulture);
+                  else
+                  {
+                      numberValue = number;
+                      numberType = JsonToken.String;
+                  }
+              }
+              catch (OverflowException ex)
+              {
+                  throw new JsonReaderException("JSON integer {0} is too large or small for an Int64.".FormatWith(CultureInfo.InvariantCulture, number), ex);
+              }   
           }
         }
       }
